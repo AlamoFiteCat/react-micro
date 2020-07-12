@@ -1,5 +1,5 @@
-import React from "react";
+import React from 'react';
 
 export default function MaturityComponent() {
-  return <div></div>;
+  return <div>Maturity Works</div>;
 }
