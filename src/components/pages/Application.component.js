@@ -1,22 +1,23 @@
 // [Base Imports]
-import React, { useState, useEffect, useRef } from 'react';
-import firebase from '../../util/firebase';
-import moment from 'moment';
+import React, { useState, useEffect, useRef } from "react";
+import firebase from "../../util/firebase";
+import moment from "moment";
 
 // [Component Imports]
-import CreateApplication from '../Dialogs/CreateApplication';
-import Button from '@material-ui/core/Button';
-import DescriptionIcon from '@material-ui/icons/Description';
+import CreateApplication from "../Dialogs/CreateApplication";
+import EditApplication from "../Dialogs/EditApplication";
+import Button from "@material-ui/core/Button";
+import DescriptionIcon from "@material-ui/icons/Description";
 
 // [Table Imports]
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import { makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
 
 // [Set Styles]
 const useStyles = makeStyles({
@@ -25,7 +26,7 @@ const useStyles = makeStyles({
   },
 
   heading: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 
   paper: {
@@ -36,9 +37,9 @@ const useStyles = makeStyles({
   },
 
   tableRow: {
-    '&:hover': {
-      backgroundColor: '#ecf0f1',
-      cursor: 'pointer',
+    "&:hover": {
+      backgroundColor: "#ecf0f1",
+      cursor: "pointer",
     },
   },
 });
@@ -48,7 +49,7 @@ function useApplications() {
   useEffect(() => {
     firebase
       .firestore()
-      .collection('applications')
+      .collection("applications")
       .onSnapshot((snapshot) => {
         const fetchedApplicaitons = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -74,8 +75,8 @@ const ApplicationComponent = () => {
   // [UPDATE & DELETE]
   const [dialogData, setDialogData] = useState({});
   const refEdit = useRef(false);
-  const handleClickOpenEdit = (city) => {
-    setDialogData(city);
+  const handleClickOpenEdit = (application) => {
+    setDialogData(application);
     refEdit.current.showDialogEdit();
   };
 
@@ -94,6 +95,7 @@ const ApplicationComponent = () => {
           </Button>
         </Paper>
         <CreateApplication ref={ref} />
+        <EditApplication ref={refEdit} dialogData={dialogData} />
         <TableContainer component={Paper} className={classes.table}>
           <Table aria-label="applications table">
             <TableHead>
@@ -124,7 +126,20 @@ const ApplicationComponent = () => {
             </TableHead>
             <TableBody>
               {applications.map((app) => (
-                <TableRow key={app.id} className={classes.tableRow}>
+                <TableRow
+                  key={app.id}
+                  className={classes.tableRow}
+                  onClick={() =>
+                    handleClickOpenEdit({
+                      id: app.id,
+                      contact: app.contact,
+                      requestedAmount: app.requestedAmount,
+                      installments: app.installments,
+                      requestedInterestRate: app.requestedInterestRate,
+                      status: app.status,
+                    })
+                  }
+                >
                   <TableCell component="td" scope="row">
                     {app.id}
                   </TableCell>
@@ -132,7 +147,7 @@ const ApplicationComponent = () => {
                   <TableCell align="right">{app.office}</TableCell>
                   <TableCell align="right">
                     {moment(app.applicationDate.seconds * 1000).format(
-                      'DD/MM/YYYY'
+                      "DD/MM/YYYY"
                     )}
                   </TableCell>
                   <TableCell align="right">{app.status}</TableCell>
