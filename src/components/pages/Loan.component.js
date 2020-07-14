@@ -1,5 +1,5 @@
 // [Base Imports]
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import firebase from "../../util/firebase";
 import moment from "moment";
 
@@ -12,9 +12,6 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-
-// [Repayment Plan Import]
-import RepaymentPlan from "../Dialogs/RepaymentPlan";
 
 // [Set Styles]
 const useStyles = makeStyles({
@@ -63,19 +60,10 @@ export default function LoanComponent() {
   const loans = useLoans();
   const classes = useStyles();
 
-  // [Repayment Plan Controls]
-  const [dialogData, setDialogData] = useState({});
-  const refEdit = useRef(false);
-  const handleClickOpenEdit = (loan) => {
-    setDialogData(loan);
-    refEdit.current.showDialogEdit();
-  };
-
   if (loans) {
     return (
       <div>
         <h1>Loans</h1>
-        <RepaymentPlan ref={refEdit} dialogData={dialogData} />
         <TableContainer component={Paper} className={classes.table}>
           <Table aria-label="loans table">
             <TableHead>
@@ -112,19 +100,7 @@ export default function LoanComponent() {
             </TableHead>
             <TableBody>
               {loans.map((l) => (
-                <TableRow
-                  key={l.id}
-                  className={classes.tableRow}
-                  onClick={() =>
-                    handleClickOpenEdit({
-                      id: l.id,
-                      amount: l.approvedAmount,
-                      installments: l.installments,
-                      interestRate: l.approvedInterestRate,
-                      date: l.agreementDate,
-                    })
-                  }
-                >
+                <TableRow key={l.id} className={classes.tableRow}>
                   <TableCell component="td" scope="row">
                     {l.id}
                   </TableCell>
