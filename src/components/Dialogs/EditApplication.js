@@ -16,6 +16,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
+import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
 
@@ -72,6 +73,7 @@ const EditApplication = forwardRef((props, ref) => {
     };
   });
 
+  // [CRUD Control]
   const updateApplication = (applicationId) => {
     const contact = document.querySelector("#app-contact-edit").innerHTML;
     const office = document.querySelector("#app-office-edit").innerHTML;
@@ -105,12 +107,69 @@ const EditApplication = forwardRef((props, ref) => {
   const contacts = useContacts();
   const offices = useOffices();
   const [person, setPerson] = React.useState("");
+
   const handleChange = (event) => {
     setPerson(event.target.value);
   };
   const [office, setOffice] = React.useState("");
   const handleChangeOffice = (event) => {
     setOffice(event.target.value);
+  };
+
+  // [Menu Controls]
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  // [Flow Control]
+  const sendForApproval = (applicationId) => {
+    firebase.firestore().collection("applications").doc(applicationId).update({
+      status: 2,
+    });
+    handleClose();
+  };
+
+  const approveApplication = (applicationId) => {
+    firebase.firestore().collection("applications").doc(applicationId).update({
+      status: 3,
+    });
+
+    let contact = document.querySelector("#app-contact-edit").innerHTML;
+    let office = document.querySelector("#app-office-edit").innerHTML;
+    const approvedAmount = document.querySelector("#app-amount-edit").value;
+    const installments = document.querySelector("#app-installments-edit").value;
+    const approvedInterestRate = document.querySelector(
+      "#app-interest-rate-edit"
+    ).value;
+
+    const newLoan = {
+      agreementDate: new Date(),
+      applicationId,
+      approvedAmount,
+      approvedInterestRate,
+      contact,
+      installments,
+      office,
+      status: 1,
+    };
+
+    if (contact.trim() === "<span>​</span>") {
+      newLoan.contact = props.dialogData.contact;
+    }
+
+    if (office.trim() === "<span>​</span>") {
+      newLoan.office = props.dialogData.office;
+    }
+
+    firebase.firestore().collection("loans").add(newLoan);
+
+    handleClose();
   };
 
   return (
@@ -186,6 +245,30 @@ const EditApplication = forwardRef((props, ref) => {
           />
         </DialogContent>
         <DialogActions>
+          <Button
+            aria-controls="activity-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
+            color="primary"
+            variant="contained"
+          >
+            Activity
+          </Button>
+          <Menu
+            id="activity-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={() => sendForApproval(props.dialogData.id)}>
+              Send for Approval
+            </MenuItem>
+            <MenuItem onClick={() => approveApplication(props.dialogData.id)}>
+              Approve
+            </MenuItem>
+          </Menu>
+
           <Button
             color="secondary"
             variant="contained"

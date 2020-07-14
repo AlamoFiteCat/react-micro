@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 
   paper: {
     height: 64,
-    width: 1024,
+    width: 1280,
     padding: 16,
     marginBottom: 8,
   },
@@ -133,6 +133,7 @@ const ApplicationComponent = () => {
                     handleClickOpenEdit({
                       id: app.id,
                       contact: app.contact,
+                      office: app.office,
                       requestedAmount: app.requestedAmount,
                       installments: app.installments,
                       requestedInterestRate: app.requestedInterestRate,
