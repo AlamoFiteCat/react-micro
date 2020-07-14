@@ -1,17 +1,18 @@
 // [Imports]
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import firebase from '../../util/firebase';
+import React, { useState, forwardRef, useImperativeHandle } from "react";
+import firebase from "../../util/firebase";
 
 // [Dialog Imports]
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@material-ui/core/Button";
 
 const EditCity = forwardRef((props, ref) => {
+  // [Dialog Controls]
   const [open, setOpen] = useState(false);
   const showDialogEdit = () => {
     setOpen(true);
@@ -27,14 +28,14 @@ const EditCity = forwardRef((props, ref) => {
   });
 
   const deleteCity = (cityId) => {
-    firebase.firestore().collection('cities').doc(cityId).delete();
+    firebase.firestore().collection("cities").doc(cityId).delete();
     setOpen(false);
   };
 
   const updateCity = (cityId) => {
-    const newCityName = document.querySelector('#city-name-edit').value;
-    const newCityCode = document.querySelector('#city-code-edit').value;
-    firebase.firestore().collection('cities').doc(cityId).set({
+    const newCityName = document.querySelector("#city-name-edit").value;
+    const newCityCode = document.querySelector("#city-code-edit").value;
+    firebase.firestore().collection("cities").doc(cityId).set({
       name: newCityName,
       code: newCityCode,
     });
