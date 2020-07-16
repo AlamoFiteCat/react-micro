@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import firebase from "../../util/firebase";
+import moment from "moment";
 
 // [Dialog Imports]
 import TextField from "@material-ui/core/TextField";
@@ -135,6 +136,21 @@ const EditApplication = forwardRef((props, ref) => {
     handleClose();
   };
 
+  const generateRepaymentPlan = (data) => {
+    const repaymentPlan = [];
+    const date = data.agreementDate;
+    for (let i = 1; i <= parseInt(data.installments); i++) {
+      repaymentPlan.push({
+        installmentNo: i,
+        installmentDate: moment(date).add(i, "months")._d,
+        installmentAmount: data.installmentAmount,
+        due: false,
+      });
+    }
+
+    return repaymentPlan;
+  };
+
   const approveApplication = (applicationId) => {
     firebase.firestore().collection("applications").doc(applicationId).update({
       status: 3,
@@ -147,6 +163,15 @@ const EditApplication = forwardRef((props, ref) => {
     const approvedInterestRate = document.querySelector(
       "#app-interest-rate-edit"
     ).value;
+    const principal = parseFloat(approvedAmount) / parseFloat(installments);
+    const interest = (principal / 100) * parseFloat(approvedInterestRate);
+    const installmentAmount = principal + interest;
+
+    const repaymentPlan = generateRepaymentPlan({
+      agreementDate: new Date(),
+      installments,
+      installmentAmount,
+    });
 
     const newLoan = {
       agreementDate: new Date(),
@@ -157,6 +182,8 @@ const EditApplication = forwardRef((props, ref) => {
       installments,
       office,
       status: 1,
+      installmentAmount,
+      repaymentPlan,
     };
 
     if (contact.trim() === "<span>​</span>") {

@@ -94,6 +94,9 @@ export default function LoanComponent() {
                   Installments
                 </TableCell>
                 <TableCell align="right" className={classes.heading}>
+                  Installment Amount
+                </TableCell>
+                <TableCell align="right" className={classes.heading}>
                   Interest Rate
                 </TableCell>
               </TableRow>
@@ -122,6 +125,9 @@ export default function LoanComponent() {
                   </TableCell>
                   <TableCell align="right">{l.approvedAmount}</TableCell>
                   <TableCell align="right">{l.installments}</TableCell>
+                  <TableCell align="right">
+                    {parseFloat(l.installmentAmount).toFixed(2)}
+                  </TableCell>
                   <TableCell align="right">{l.approvedInterestRate}</TableCell>
                 </TableRow>
               ))}
