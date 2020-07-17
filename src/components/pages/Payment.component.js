@@ -1,5 +1,5 @@
 // [Base Imports]
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import firebase from "../../util/firebase";
 import moment from "moment";
 
@@ -37,6 +37,12 @@ const useStyles = makeStyles({
     },
   },
 });
+
+const payDebt = (debtId) => {
+  firebase.firestore().collection("debts").doc(debtId).update({
+    paid: "Yes",
+  });
+};
 
 function useDebts() {
   const [debts, setDebts] = useState([]);
@@ -80,11 +86,18 @@ export default function PaymentComponent() {
               <TableCell align="right" className={classes.heading}>
                 Loan ID
               </TableCell>
+              <TableCell align="right" className={classes.heading}>
+                Paid
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {debts.map((debt) => (
-              <TableRow key={debt.id} className={classes.tableRow}>
+              <TableRow
+                key={debt.id}
+                className={classes.tableRow}
+                onClick={() => payDebt(debt.id)}
+              >
                 <TableCell component="td" scope="row">
                   {debt.id}
                 </TableCell>
@@ -94,6 +107,7 @@ export default function PaymentComponent() {
                 </TableCell>
                 <TableCell align="right">{debt.installmentNo}</TableCell>
                 <TableCell align="right">{debt.loan}</TableCell>
+                <TableCell align="right">{debt.paid}</TableCell>
               </TableRow>
             ))}
           </TableBody>
