@@ -55,7 +55,6 @@ const closeLoans = async () => {
       .where("loan", "==", currentLoan.id)
       .where("paid", "==", "Yes")
       .get();
-    console.log(currentLoan.id);
     paidInstallments.forEach((debt) => {
       numberofPaidInstallments++;
     });
